@@ -1,0 +1,28 @@
+{% extends 'todos/base.html' %}
+
+{% block content %}
+<div class="page-card">
+    <div class="page-header">
+        <div>
+            <h2>Add a new Task</h2>
+            <p class="info-block">Add a task with an optional due date using the dark transparent UI.</p>
+        </div>
+    </div>
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        <label>
+            Task title
+            <input type="text" name="title" placeholder="Enter todo title" required>
+        </label>
+        <label>
+            Description (optional)
+            <textarea style="background: rgba(255, 255, 255, 0.06); color: white; border-radius: 16px;display: block; width: 100%;" name="description" placeholder="Add more details" rows="3"></textarea>
+        </label>
+        <label>
+            Due date (optional)
+            <input type="datetime-local" name="due_date">
+        </label>
+        <button type="submit">Add todo</button>
+    </form>
+</div>
+{% endblock %}

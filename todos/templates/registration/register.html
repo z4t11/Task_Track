@@ -1,0 +1,33 @@
+{% extends 'todos/base.html' %}
+
+{% block content %}
+<div class="page-card">
+    <h2>Create account</h2>
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <label>Username
+            {{ form.username }}
+        </label>
+        <label>Email
+            {{ form.email }}
+        </label>
+        <label>First name
+            {{ form.first_name }}
+        </label>
+        <label>Last name
+            {{ form.last_name }}
+        </label>
+        <label>Password
+            {{ form.password1 }}
+        </label>
+        <label>Confirm password
+            {{ form.password2 }}
+        </label>
+        <div class="button-row">
+            <button type="submit" class="button-link">Register</button>
+            <a href="{% url 'login' %}" class="secondary">Have an account?</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

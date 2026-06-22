@@ -1,0 +1,21 @@
+{% extends 'todos/base.html' %}
+
+{% block content %}
+<div class="page-card">
+    <h2>Sign in</h2>
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <label>Username
+            {{ form.username }}
+        </label>
+        <label>Password
+            {{ form.password }}
+        </label>
+        <div class="button-row">
+            <button type="submit" class="button-link">Sign in</button>
+            <a href="{% url 'password_reset' %}" class="secondary">Forgot password?</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

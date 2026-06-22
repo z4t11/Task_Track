@@ -1,0 +1,61 @@
+{% extends 'todos/base.html' %}
+
+{% block content %}
+<div class="page-card">
+    <h2>AI-generated Schedule</h2>
+    {% if error %}
+        <div class="empty-state">Error generating schedule: {{ error }}</div>
+    {% elif not result %}
+        <div class="empty-state">No schedule generated. Ensure GROQ_API_URL and GROQ_API_KEY are set.</div>
+    {% else %}
+        <h3>Today</h3>
+        <ul class="todo-list">
+            {% for item in result.plan.today %}
+                <li class="todo-item">
+                    <div class="todo-item-left">
+                        <div class="todo-text">
+                            <strong>{{ item.title }}</strong>
+                            <div class="meta">Start: {{ item.start_time }} &middot; Duration: {{ item.duration_minutes }}m</div>
+                            <div class="details">Reason: {{ result.plan.explanations[item.id|stringformat:"s"] }}</div>
+                        </div>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="empty-state">No items for today.</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Tomorrow</h3>
+        <ul class="todo-list">
+            {% for item in result.plan.tomorrow %}
+                <li class="todo-item">
+                    <div class="todo-item-left">
+                        <div class="todo-text">
+                            <strong>{{ item.title }}</strong>
+                            <div class="meta">Start: {{ item.start_time }} &middot; Duration: {{ item.duration_minutes }}m</div>
+                        </div>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="empty-state">No items for tomorrow.</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Upcoming</h3>
+        <ul class="todo-list">
+            {% for item in result.plan.upcoming %}
+                <li class="todo-item">
+                    <div class="todo-item-left">
+                        <div class="todo-text">
+                            <strong>{{ item.title }}</strong>
+                            <div class="meta">Planned: {{ item.scheduled_date }} &middot; Duration: {{ item.duration_minutes }}m</div>
+                        </div>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="empty-state">No upcoming items.</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

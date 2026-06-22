@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg: #060816;
+            --surface: rgba(15, 23, 42, 0.72);
+            --surface-strong: rgba(15, 23, 42, 0.86);
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #7c3aed;
+            --accent-soft: rgba(124, 58, 237, 0.18);
+            --success: #22c55e;
+            --danger: #fb7185;
+            --border: rgba(148, 163, 184, 0.18);
+            --shadow: 0 30px 80px rgba(15, 23, 42, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.2), transparent 30%),
+                        radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.16), transparent 26%),
+                        linear-gradient(180deg, #02040c 0%, #0b1224 100%);
+            padding: 36px;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .page-card {
+            backdrop-filter: blur(24px);
+            background: rgba(15, 23, 42, 0.68);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+        }
+
+        .delete-card {
+            border-color: rgba(251, 113, 133, 0.22);
+        }
+
+        h1, h2 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 3vw, 2.6rem);
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .header-back {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            gap: 24px;
+        }
+
+        .page-header p {
+            max-width: 620px;
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.75;
+        }
+
+        .button-link,
+        button,
+        .delete-card .secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            padding: 0.95rem 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .button-link {
+            background: rgba(99, 102, 241, 0.18);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .button-link:hover,
+        button:hover,
+        .delete-card .secondary:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        .secondary {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .form-card {
+            display: grid;
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .form-card label {
+            display: grid;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 0.96rem;
+        }
+
+        .form-card input {
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
+            padding: 14px 16px;
+            font: inherit;
+        }
+
+        .form-card input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-card button {
+            width: fit-content;
+            background: rgba(99, 102, 241, 0.2);
+            color: white;
+            border: 1px solid rgba(99, 102, 241, 0.45);
+            padding: 14px 22px;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .danger {
+            background: rgba(251, 113, 133, 0.18);
+            color: white;
+            border-color: rgba(251, 113, 133, 0.35);
+        }
+
+        .todo-home {
+            margin-top: 24px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .todo-link-card {
+            display: grid;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
+            padding: 22px;
+            background: rgba(15, 23, 42, 0.65);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
+        }
+
+        .todo-link-card a {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .todo-item {
+            padding: 20px 18px;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.72);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .todo-item-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        .todo-toggle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.16);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, border-color 0.2s ease;
+            color: transparent;
+            background: rgba(255, 255, 255, 0.06);
+            text-decoration: none;
+        }
+
+        .todo-toggle.checked {
+            background: rgba(8, 9, 31, 0.95);
+            border-color: rgba(99, 102, 241, 0.9);
+            color: white;
+        }
+
+        .todo-toggle.checked::after {
+            content: '';
+            width: 10px;
+            height: 6px;
+            border: solid white;
+            border-width: 0 0 3px 3px;
+            transform: translateY(-1px) rotate(-45deg);
+            display: inline-block;
+        }
+
+        .todo-text {
+            min-width: 0;
+        }
+
+        .todo-item strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: white;
+        }
+
+        .delete-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(251, 113, 133, 0.14);
+            color: var(--danger);
+            text-decoration: none;
+            border: 1px solid rgba(251, 113, 133, 0.3);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .delete-icon:hover {
+            transform: translateY(-1px);
+            background: rgba(251, 113, 133, 0.28);
+        }
+
+        .info-block {
+            color: var(--muted);
+            line-height: 1.75;
+        }
+
+        .todo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 16px;
+        }
+
+        .empty-state {
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--muted);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
+        }
+
+        .details {
+            display: none;
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .todo-item.urgent-green {
+            border-color: rgba(34,197,94,0.12);
+            box-shadow: 0 8px 20px rgba(34,197,94,0.06);
+        }
+
+        .todo-item.urgent-yellow {
+            border-color: rgba(250,204,21,0.12);
+            box-shadow: 0 8px 20px rgba(250,204,21,0.04);
+        }
+
+        .todo-item.urgent-red {
+            border-color: rgba(251,113,133,0.16);
+            box-shadow: 0 8px 20px rgba(251,113,133,0.06);
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: var(--muted);
+            filter: blur(0.5px);
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .due-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(99, 102, 241, 0.18);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .due-status.overdue {
+            background: rgba(251, 113, 133, 0.16);
+            color: var(--danger);
+        }
+
+        .home-card {
+            padding: 24px;
+        }
+
+        .add-button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+
+        .add-todo-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(99, 102, 241, 0.16);
+            border: 1.5px solid rgba(99, 102, 241, 0.4);
+            border-radius: 999px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .add-todo-button:hover {
+            transform: translateY(-1px);
+            background: rgba(99, 102, 241, 0.24);
+            border-color: rgba(99, 102, 241, 0.6);
+        }
+
+        .add-todo-button.icon-only {
+            padding: 0;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            background: linear-gradient(180deg, rgba(124,58,237,0.98), rgba(99,102,241,0.95));
+            color: white;
+            border: none;
+            box-shadow: 0 10px 30px rgba(2,6,23,0.6), 0 2px 6px rgba(124,58,237,0.18);
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .add-todo-button.icon-only svg { width: 20px; height: 20px; }
+
+        .add-todo-button.icon-only:focus {
+            outline: 3px solid rgba(235, 20, 20, 0.22);
+            outline-offset: 4px;
+        }
+
+        .add-todo-button.icon-only:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px rgba(1, 3, 14, 0.6), 0 4px 12px rgba(124,58,237,0.22);
+        }
+
+        .add-todo-form {
+            margin-bottom: 28px;
+        }
+
+        .form-row-inline {
+            display: grid;
+            grid-template-columns: 1fr 220px 48px;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .form-row-inline input {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
+            padding: 12px 16px;
+            font: inherit;
+            font-size: 0.95rem;
+        }
+
+        .form-row-inline input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .submit-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: rgba(3, 3, 20, 0.24);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: var(--accent);
+            cursor: pointer;
+            display: flex;
+            
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(99, 102, 241, 0.35);
+        }
+
+        .fab-button {
+            display: none;
+        }
+
+        @media (max-width: 760px) {
+            body { padding: 24px; }
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .form-row-inline {
+                grid-template-columns: 1fr;
+            }
+            .submit-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header class="page-header">
+            {% comment %}Wrap header as a back-link on the add page{% endcomment %}
+            {% if is_add_page %}
+            <a href="{% url 'index' %}" class="header-back" aria-label="Back to list">
+                <div>
+                    <h1>TaskTrack</h1>
+                    <p>Organize smarter. Achieve faster.</p>
+                </div>
+            </a>
+
+            {% elif is_profile_page %}
+              <a href="{% url 'index' %}" class="header-back" aria-label="Back to list">
+                <div>
+                    <h1>TaskTrack</h1>
+                    <p>Organize smarter. Achieve faster.</p>
+                </div>
+            </a>
+
+            {% else %}
+            <div>
+                <a href="{% url 'index' %}" class="header-back" aria-label="Home">
+                    <h1>TaskTrack</h1>
+                </a>
+                <p>Organize smarter. Achieve faster.</p>
+            </div>
+            {% endif %}
+
+            {# add button moved to index page for centered placement #}
+            <nav style="display:flex;gap:12px;align-items:center;">
+                {% if user.is_authenticated %}
+                    <div style="color:var(--muted);font-weight:600;">Welcome, {{ user.get_username }}</div>
+                    <a href="{% url 'profile' %}" class="button-link">Profile</a>
+                    <form method="post" action="{% url 'logout' %}" style="display:inline; margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" class="secondary" style="border:none; background:none;">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="button-link">Login</a>
+                    <a href="{% url 'register' %}" class="secondary">Register</a>
+                {% endif %}
+            </nav>
+        </header>
+
+        {% block content %}{% endblock %}
+    </main>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

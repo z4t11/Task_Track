@@ -1,0 +1,21 @@
+{% extends 'todos/base.html' %}
+
+{% block content %}
+<div class="page-card delete-card">
+    <div class="page-header">
+        <div>
+            <h2>Delete todo</h2>
+            <p class="info-block">Confirm delete .</p>
+        </div>
+        
+    </div>
+    <p>Are you sure you want to delete <strong>{{ todo.title }}</strong>?</p>
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        <div class="button-row">
+            <button type="submit" class="danger">Confirm delete</button>
+            <a href="{% url 'index' %}" class="secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'todos/base.html' %}
+
+{% block content %}
+<div class="page-card">
+    <h2>AI-generated Plan</h2>
+    <p class="info-block">Tasks are ordered by a priority score combining due date urgency, AI score, and estimated duration.</p>
+
+    <ul class="todo-list">
+        {% for item in plan %}
+            <li class="todo-item">
+                <div class="todo-item-left">
+                    <div class="todo-text">
+                        <strong class="{% if item.todo.completed %}completed{% endif %}">{{ item.todo.title }}</strong>
+                        <div class="meta">
+                            {% if item.todo.due_date %}
+                                <span class="time-left">Due: {{ item.todo.due_date|date:'M d, Y H:i' }}</span>
+                            {% endif %}
+                            <span>Score: {{ item.score|floatformat:2 }}</span>
+                        </div>
+                        <div class="details">
+                            {% if item.todo.description %}{{ item.todo.description }}{% endif %}
+                            <div>Reason: {{ item.reasons|join:", " }}</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'toggle' item.todo.id %}" class="todo-toggle {% if item.todo.completed %}checked{% endif %}"></a>
+            </li>
+        {% empty %}
+            <li class="empty-state">No tasks to plan.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
