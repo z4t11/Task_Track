@@ -87,11 +87,18 @@ def generate_schedule_for_user(user, max_retries: int = 3, backoff: float = 1.0)
                 parsed = body
 
             if _validate_schedule(parsed):
+                # Add explanations to each item for easier template rendering
+                explanations_map = parsed.get('explanations', {})
+                for section in ('today', 'tomorrow', 'upcoming'):
+                    if section in parsed and isinstance(parsed[section], list):
+                        for item in parsed[section]:
+                            item['reason'] = explanations_map.get(str(item.get('id', '')), '')
+                
                 # persist
                 plan = ScheduledPlan.objects.create(
                     user=user,
                     data=parsed,
-                    explanation=json.dumps(parsed.get('explanations', {})),
+                    explanation=json.dumps(explanations_map),
                 )
                 return {'plan': parsed, 'saved_as': plan.id}
 

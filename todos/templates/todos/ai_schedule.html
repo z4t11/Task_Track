@@ -16,7 +16,7 @@
                         <div class="todo-text">
                             <strong>{{ item.title }}</strong>
                             <div class="meta">Start: {{ item.start_time }} &middot; Duration: {{ item.duration_minutes }}m</div>
-                            <div class="details">Reason: {{ result.plan.explanations[item.id|stringformat:"s"] }}</div>
+                            <div class="details">Reason:{{ item.reason }}</div>
                         </div>
                     </div>
                 </li>

@@ -12,5 +12,5 @@ urlpatterns = [
     path('accounts/profile/', views.profile, name='profile'),
     path('plan/', views.generate_plan, name='generate_plan'),
     path('ai-schedule/', views.ai_schedule, name='ai_schedule'),
-     path('logout/', LogoutView.as_view(next_page='login'),name='logout'),
+    path('logout/', LogoutView.as_view(next_page='login'),name='logout'),
 ]

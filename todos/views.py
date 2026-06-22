@@ -99,18 +99,37 @@ def generate_plan(request):
     # plan is a list of dicts with 'todo', 'score', 'reasons'
     return render(request, 'todos/plan.html', {'plan': plan})
 
-
 @login_required
 def ai_schedule(request):
     result = None
     error = None
+
     try:
         result = generate_schedule_for_user(request.user)
+
+        # 🚨 guard clause
+        if not result:
+            raise ValueError("AI returned empty response")
+
+        plan = result.get("plan", {})
+
+        explanations = plan.get("explanations", {})
+
+        for item in plan.get("today", []):
+            item["reason"] = explanations.get(str(item.get("id")), "")
+
+        for item in plan.get("tomorrow", []):
+            item["reason"] = explanations.get(str(item.get("id")), "")
+
+        result["plan"] = plan
+
     except Exception as e:
         error = str(e)
 
-    return render(request, 'todos/ai_schedule.html', {'result': result, 'error': error})
-
+    return render(request, 'todos/ai_schedule.html', {
+        'result': result,
+        'error': error
+    })
 
 @login_required
 def logout_view(request):
